@@ -1,2 +1,2 @@
-# snippet
-Record useful code snippets.
+# Snippet
+记录一些有用的代码片段
