@@ -73,3 +73,53 @@ public class Test {
     }
 }
 ```
+
+### 设置 cookie
+```java
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import org.junit.Test;
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
+
+/**
+ * @author Jikai Zhang
+ * @date 2018-04-16
+ */
+public class Test {
+
+    @Test
+    public void test() {
+        JSONObject requestJSON = new JSONObject();
+        requestJSON.put("username", "password");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestJSON.toJSONString(), headers);
+        
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange("http://api.test.com/login", HttpMethod.POST, requestEntity, String.class);
+
+        // 保存 cookie
+        List<String> cookies = response.getHeaders().get("Set-Cookie");
+        System.out.println(response.getStatusCode() + " " + response.getBody());
+
+
+        requestJSON = new JSONObject();
+        requestJSON.put("111", "2222");
+        headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        // 请求时加入 cookies
+        headers.put("Cookie", cookies);
+        requestEntity = new HttpEntity<>(requestJSON.toJSONString(), headers);
+
+        restTemplate = new RestTemplate();
+        response = restTemplate.exchange("http://api.test.com/", HttpMethod.POST, requestEntity, String.class);
+
+        System.out.println(response.getStatusCode());
+
+
+    }
+}
+```
